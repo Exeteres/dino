@@ -1,0 +1,20 @@
+name: dino
+
+packages:
+  - example
+  - packages/**
+
+ide:
+  intellij: false
+
+scripts:
+  test:
+    description: Test dart packages
+    run: dart run melos exec -c 1 -- "dart run full_coverage && dart run coverage:test_with_coverage"
+    select-package:
+      dir-exists: test
+      flutter: false
+
+command:
+  bootstrap:
+    usePubspecOverrides: true

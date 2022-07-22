@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "**/.packages": true,
+    "**/.dart_tool": true,
+    "**/coverage": true
+  },
+  "dart.runPubGetOnPubspecChanges": false
+}

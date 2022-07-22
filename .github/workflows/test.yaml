@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.0.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Bootstrap packages
+        run: dart run melos bs
+
+      - name: Run tests
+        run: dart run melos test --no-select
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
