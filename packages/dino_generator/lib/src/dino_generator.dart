@@ -15,6 +15,6 @@ class DinoGenerator implements Generator {
 
   @override
   Future<String?> generate(LibraryReader library, BuildStep buildStep) {
-    return _compositionRoot.process(library.element);
+    return _compositionRoot.process(library.element, buildStep.resolver);
   }
 }

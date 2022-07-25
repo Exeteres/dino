@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
 import 'package:dino_generator/src/service_implementation_factory.dart';
 import 'package:dino_generator/src/service_implementation_location_visitor.dart';
 import 'package:dino_generator/src/utils.dart';
@@ -26,8 +27,10 @@ class ImplementationProvider {
 }
 
 class ImplementationProviderLocator {
-  ImplementationProviderLocator(this._implementationFactory);
+  ImplementationProviderLocator(this._implementationFactory, this._resolver);
+
   final ServiceImplementationFactory _implementationFactory;
+  final Resolver _resolver;
 
   final HashMap<ExecutableElement, ImplementationProvider?>
       _implementationProviders = HashMap();
@@ -50,7 +53,7 @@ class ImplementationProviderLocator {
     ExecutableElement executableElement,
     Element? scSymbol,
   ) async {
-    final node = await getElementDeclarationNode(executableElement);
+    final node = await getElementDeclarationNode(executableElement, _resolver);
 
     if (node == null) {
       return null;

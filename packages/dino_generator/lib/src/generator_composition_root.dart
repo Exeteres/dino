@@ -12,16 +12,6 @@ import 'package:dino_generator/src/service_implementation_factory.dart';
 import 'package:dino_generator/src/utils.dart';
 
 class GeneratorCompositionRoot {
-  GeneratorCompositionRoot() {
-    _impLocator = ImplementationProviderLocator(
-      _implementationFactory,
-    );
-  }
-
-  late ImplementationProviderLocator _impLocator;
-
-  final LibraryMethodAnalyzer _methodAnalyzer = LibraryMethodAnalyzer();
-
   final ServiceCollectionLocator _scLocator = ServiceCollectionLocator();
 
   final ServiceImplementationFactory _implementationFactory =
@@ -29,14 +19,20 @@ class GeneratorCompositionRoot {
 
   final ServiceCollectionEmitter _scEmitter = ServiceCollectionEmitter();
 
-  Future<String?> process(LibraryElement libraryElement) async {
-    final locatedElements = await _locateServiceCollections(libraryElement);
+  Future<String?> process(
+    LibraryElement libraryElement,
+    Resolver resolver,
+  ) async {
+    final locatedElements = await _locateServiceCollections(
+      libraryElement,
+      resolver,
+    );
 
     if (locatedElements == null) {
       return null;
     }
 
-    final library = await _generateLibrary(locatedElements);
+    final library = await _generateLibrary(locatedElements, resolver);
 
     if (library == null) {
       return null;
@@ -51,10 +47,13 @@ class GeneratorCompositionRoot {
 
   Future<Map<String, VariableElement>?> _locateServiceCollections(
     LibraryElement libraryElement,
+    Resolver resolver,
   ) async {
     _scLocator.locatedElements.clear();
 
-    await _methodAnalyzer.analyze(libraryElement, _scLocator);
+    final methodAnalyzer = LibraryMethodAnalyzer(resolver);
+
+    await methodAnalyzer.analyze(libraryElement, _scLocator);
 
     if (_scLocator.locatedElements.isEmpty) {
       return null;
@@ -65,6 +64,7 @@ class GeneratorCompositionRoot {
 
   Future<Library?> _generateLibrary(
     Map<String, VariableElement> locatedElements,
+    Resolver resolver,
   ) async {
     final classes = <Class>[];
 
@@ -74,6 +74,7 @@ class GeneratorCompositionRoot {
       final classInstance = await _createSCImplementation(
         entry.key,
         entry.value,
+        resolver,
       );
 
       classes.add(classInstance);
@@ -85,6 +86,7 @@ class GeneratorCompositionRoot {
   Future<Class> _createSCImplementation(
     String typeName,
     VariableElement element,
+    Resolver resolver,
   ) async {
     final executableElement = findEnclosingExecutableElement(element);
 
@@ -92,7 +94,12 @@ class GeneratorCompositionRoot {
       throw Exception('Could not find executable element for $element');
     }
 
-    final implementationProvider = await _impLocator.resolve(
+    final impLocator = ImplementationProviderLocator(
+      _implementationFactory,
+      resolver,
+    );
+
+    final implementationProvider = await impLocator.resolve(
       executableElement,
       element,
     );

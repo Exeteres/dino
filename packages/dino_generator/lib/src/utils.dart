@@ -13,13 +13,10 @@ const String dinoServiceDescriptorLibraryUri =
 const String dinoServiceCollectionLibraryUri =
     'package:dino/src/collection/service_collection.dart';
 
-Future<AstNode?> getElementDeclarationNode(Element element) async {
-  final session = element.session;
-
-  if (session == null) {
-    throw Exception('Element declaraion session is null');
-  }
-
+Future<AstNode?> getElementDeclarationNode(
+  Element element,
+  Resolver resolver,
+) async {
   final library = element.library;
 
   if (library == null) {
@@ -27,10 +24,9 @@ Future<AstNode?> getElementDeclarationNode(Element element) async {
     return null;
   }
 
-  final result = await session.getResolvedLibraryByElement(library);
+  final result = await _getResolvedLibrary(library, resolver);
 
-  if (result is! ResolvedLibraryResult) {
-    log.warning('Failed to load library ${element.library}');
+  if (result == null) {
     return null;
   }
 
@@ -42,6 +38,44 @@ Future<AstNode?> getElementDeclarationNode(Element element) async {
   }
 
   return declararation.node;
+}
+
+// https://github.com/dart-lang/build/issues/2634#issuecomment-1077501656
+Future<ResolvedLibraryResult?> _getResolvedLibrary(
+  LibraryElement library,
+  Resolver resolver,
+) async {
+  var attempts = 0;
+
+  while (true) {
+    try {
+      final freshLibrary =
+          await resolver.libraryFor(await resolver.assetIdForElement(library));
+
+      final freshSession = freshLibrary.session;
+
+      var someResult =
+          await freshSession.getResolvedLibraryByElement(freshLibrary);
+
+      if (someResult is! ResolvedLibraryResult) {
+        log.warning('Failed to resolve library: ${someResult}');
+        return null;
+      }
+
+      return someResult;
+    } catch (_) {
+      ++attempts;
+
+      if (attempts == 10) {
+        log.severe(
+          'Internal error: Analysis session '
+          'did not stabilize after ten attempts!',
+        );
+
+        return null;
+      }
+    }
+  }
 }
 
 Reference referDino(String symbol) {

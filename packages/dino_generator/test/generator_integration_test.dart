@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart';
@@ -16,9 +15,8 @@ Future<void> main() async {
 
   for (final testCase in testCases) {
     test('generate code for ${testCase.name}', () async {
-      final element = await createLibraryElement(testCase);
+      var result = await invokeGeneratorForCase(compositionRoot, testCase);
 
-      var result = await compositionRoot.process(element) ?? '';
       result = dartFormatter.format(result);
 
       expect(result, TestCaseMatcher(testCase));
@@ -27,12 +25,12 @@ Future<void> main() async {
 }
 
 class TestCase {
+  TestCase(this.name, this.path, this.input, this.output);
+
   final String name;
   final String path;
   final String input;
   final String? output;
-
-  TestCase(this.name, this.path, this.input, this.output);
 }
 
 Future<List<TestCase>> locateTestCases() async {
@@ -75,14 +73,21 @@ Future<TestCase?> tryGetTestCase(FileSystemEntity entity) async {
   );
 }
 
-Future<LibraryElement> createLibraryElement(TestCase testCase) {
+Future<String> invokeGeneratorForCase(
+  GeneratorCompositionRoot compositionRoot,
+  TestCase testCase,
+) {
   final inputId = AssetId.parse(
     'generator_test_cases|${path.join('lib', testCase.name, 'input.dart')}',
   );
 
   return resolveSource(
     testCase.input,
-    (resolver) => resolver.libraryFor(inputId),
+    (resolver) async {
+      final library = await resolver.libraryFor(inputId);
+
+      return await compositionRoot.process(library, resolver) ?? '';
+    },
     inputId: inputId,
   );
 }
