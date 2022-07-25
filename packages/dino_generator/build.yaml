@@ -1,5 +1,5 @@
 builders:
-  injectable_builder:
+  dino_builder:
     import: "package:dino_generator/builder.dart"
     builder_factories: ["dinoBuilder"]
     build_extensions: { ".dart": [".dino.g.dart"] }
