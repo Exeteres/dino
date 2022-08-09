@@ -12,8 +12,6 @@ import 'package:dino_generator/src/service_implementation_factory.dart';
 import 'package:dino_generator/src/utils.dart';
 
 class GeneratorCompositionRoot {
-  final ServiceCollectionLocator _scLocator = ServiceCollectionLocator();
-
   final ServiceImplementationFactory _implementationFactory =
       ServiceImplementationFactory();
 
@@ -49,17 +47,16 @@ class GeneratorCompositionRoot {
     LibraryElement libraryElement,
     Resolver resolver,
   ) async {
-    _scLocator.locatedElements.clear();
-
+    final scLocator = ServiceCollectionLocator();
     final methodAnalyzer = LibraryMethodAnalyzer(resolver);
 
-    await methodAnalyzer.analyze(libraryElement, _scLocator);
+    await methodAnalyzer.analyze(libraryElement, scLocator);
 
-    if (_scLocator.locatedElements.isEmpty) {
+    if (scLocator.locatedElements.isEmpty) {
       return null;
     }
 
-    return _scLocator.locatedElements;
+    return scLocator.locatedElements;
   }
 
   Future<Library?> _generateLibrary(

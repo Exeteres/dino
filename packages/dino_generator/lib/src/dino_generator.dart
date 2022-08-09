@@ -6,7 +6,7 @@ import 'package:source_gen/source_gen.dart';
 import 'package:dino_generator/src/generator_composition_root.dart';
 
 class DinoGenerator implements Generator {
-  GeneratorCompositionRoot _compositionRoot = GeneratorCompositionRoot();
+  final _compositionRoot = GeneratorCompositionRoot();
 
   @override
   String toString() {
