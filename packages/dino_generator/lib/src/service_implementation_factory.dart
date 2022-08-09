@@ -34,7 +34,7 @@ class ServiceImplementationFactory {
       final dependency = TypeReference((b) => b
         ..isNullable = type.nullabilitySuffix == NullabilitySuffix.question
         ..symbol = type.getDisplayString(withNullability: false)
-        ..url = type.element!.source!.uri.toString());
+        ..url = type.element!.librarySource!.uri.toString());
 
       dependencies.add(dependency);
     }

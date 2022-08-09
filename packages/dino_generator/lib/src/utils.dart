@@ -83,7 +83,7 @@ Reference referDino(String symbol) {
 }
 
 Reference referElement(Element element) {
-  return refer(element.displayName, element.source!.uri.toString());
+  return refer(element.name!, element.librarySource!.uri.toString());
 }
 
 bool isDinoServiceCollectionType(DartType type) {
