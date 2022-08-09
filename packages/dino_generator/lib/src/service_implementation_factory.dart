@@ -1,8 +1,18 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:code_builder/code_builder.dart';
 
 import 'package:dino_generator/src/utils.dart';
+
+enum DependencyKind { single, iterable, list }
+
+class ImplementationDependency {
+  ImplementationDependency(this.kind, this.reference);
+
+  final DependencyKind kind;
+  final Reference reference;
+}
 
 class ServiceImplementation {
   ServiceImplementation(
@@ -12,7 +22,7 @@ class ServiceImplementation {
   );
 
   final Reference serviceType;
-  final List<Reference> dependencies;
+  final List<ImplementationDependency> dependencies;
   final List<Reference> aliases;
 }
 
@@ -26,17 +36,28 @@ class ServiceImplementationFactory {
       );
     }
 
-    final dependencies = <Reference>[];
+    final dependencies = <ImplementationDependency>[];
 
     for (var parameter in constructor.parameters) {
-      final type = parameter.type;
+      var kind = DependencyKind.single;
+      var type = parameter.type;
 
-      final dependency = TypeReference((b) => b
+      if (type is InterfaceType) {
+        if (type.isDartCoreList) {
+          kind = DependencyKind.list;
+          type = type.typeArguments[0];
+        } else if (type.isDartCoreIterable) {
+          kind = DependencyKind.iterable;
+          type = type.typeArguments[0];
+        }
+      }
+
+      final reference = TypeReference((b) => b
         ..isNullable = type.nullabilitySuffix == NullabilitySuffix.question
         ..symbol = type.getDisplayString(withNullability: false)
         ..url = type.element!.librarySource!.uri.toString());
 
-      dependencies.add(dependency);
+      dependencies.add(ImplementationDependency(kind, reference));
     }
 
     final serviceType = referElement(element);

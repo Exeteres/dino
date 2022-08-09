@@ -118,9 +118,27 @@ class ServiceCollectionEmitter {
     ]);
   }
 
-  Code _emitDependencyResolution(Reference reference) {
+  Code _emitDependencyResolution(ImplementationDependency dependency) {
+    var methodName;
+
+    switch (dependency.kind) {
+      case DependencyKind.single:
+        methodName = 'getRequired';
+        break;
+      case DependencyKind.iterable:
+        methodName = 'getIterable';
+        break;
+      case DependencyKind.list:
+        methodName = 'getMany';
+        break;
+      default:
+        throw Exception('Unexpected dependency kind');
+    }
+
     return Block.of([
-      refer('provider').property('getRequired').call([], {}, [reference]).code,
+      refer('provider').property(methodName).call([], {}, [
+        dependency.reference,
+      ]).code,
       const Code(',')
     ]);
   }
