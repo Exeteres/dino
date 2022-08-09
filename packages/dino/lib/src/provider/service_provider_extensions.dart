@@ -46,9 +46,21 @@ extension ServiceProviderExtensions on ServiceProvider {
     return service;
   }
 
+  /// Returns an iterable of all services of specified type.
+  ///
+  /// Services will be lazily resolved while iteration.
+  /// It means that new transient services will be created on each iteration.
+  ///
+  /// If [sameLifetime] is `true`:
+  /// - in root scope only singleton services will be returned;
+  /// - in all other scopes only scoped services will be returned.
+  Iterable<TService> getIterable<TService>([bool sameLifetime = false]) {
+    return getServiceIterable(TService, sameLifetime).cast<TService>();
+  }
+
   /// Returns a permanent list of services of specified type.
   List<TService> getMany<TService>() {
-    return getServiceIterable(TService).cast<TService>().toList();
+    return getIterable<TService>().toList();
   }
 
   /// Creates a new [ServiceScope].
