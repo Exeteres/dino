@@ -102,7 +102,7 @@ void main() {
 Then you can use the `ServiceProvider` from the `BuildContext`:
 
 ```dart
-class MyWisdget extends StatelessWidget {
+class MyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repository = context.serviceProvider.getRequired<Repository>();
