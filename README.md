@@ -1,4 +1,10 @@
-# dino
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Exeteres/dino/master/docs/assets/logo-dark.png">
+  <img alt="Logo" src="https://raw.githubusercontent.com/Exeteres/dino/master/docs/assets/logo-light.png" width="250">
+</picture>
+</p>
+<br/>
 
 Dino is a Dart dependency injection library with optional code generation.
 It was inspired by [DI in .NET](https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) and aimed to be flexible, predictable and easy to use.
@@ -78,7 +84,7 @@ final repository = rootScope.serviceProvider.getRequired<Repository>();
 repository.sendMessage('Hello world!');
 ```
 
-You can also use dino in flutter with dino_flutter package:
+You can also use dino in flutter with `dino_flutter` package:
 
 ```dart
 void main() {
@@ -105,7 +111,7 @@ Then you can use the `ServiceProvider` from the `BuildContext`:
 class MyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final repository = context.serviceProvider.getRequired<Repository>();
+    final repository = context.sp.getRequired<Repository>();
 
     // build widget
   }
