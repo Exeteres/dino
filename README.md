@@ -122,9 +122,9 @@ For a better understanding of concepts such as `ServiceCollection`, `ServiceScop
 
 ### Documentation
 
-- [Core library](docs/core-library.md)
-- [Code generation](docs/code-generation.md)
-- [Extensions](docs/extensions.md)
+- [Core library](https://github.com/Exeteres/dino/blob/master/docs/core-library.md)
+- [Code generation](https://github.com/Exeteres/dino/blob/master/docs/code-generation.md)
+- [Extensions](https://github.com/Exeteres/dino/blob/master/docs/extensions.md)
 
 ### Contributing
 
