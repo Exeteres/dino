@@ -17,3 +17,4 @@ pubspec.lock
 **/pubspec_overrides.yaml
 .DS_Store
 pubspec_overrides.yaml
+.idea

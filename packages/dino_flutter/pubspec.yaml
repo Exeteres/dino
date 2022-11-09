@@ -1,5 +1,5 @@
 name: dino_flutter
-description: A starting point for Dart libraries or applications.
+description: An integration of the dino package with the flutter framework.
 version: 1.0.0
 
 environment:

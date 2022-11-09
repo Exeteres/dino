@@ -1,7 +1,7 @@
 name: dino
+repository: https://github.com/Exeteres/dino
 
 packages:
-  - example
   - packages/**
 
 ide:
