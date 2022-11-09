@@ -1,6 +1,6 @@
 name: dino_flutter_example
 description: An example of using the dino_flutter package.
-version: 1.0.0
+publish_to: none
 
 environment:
   sdk: ">=2.17.5 <3.0.0"
@@ -8,4 +8,4 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dino_flutter: 1.0.0
+  dino_flutter: ^1.0.0-pre.0
