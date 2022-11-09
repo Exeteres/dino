@@ -9,6 +9,7 @@ class Calculator {
 
 Future<void> main() async {
   final ServiceCollection services = RuntimeServiceCollection();
+
   services.addInstance(Calculator());
 
   final scope = services.buildRootScope();
@@ -38,7 +39,7 @@ class Application extends StatelessWidget {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final calculator = context.serviceProvider.getRequired<Calculator>();
+    final calculator = context.sp.getRequired<Calculator>();
 
     return Scaffold(
       appBar: AppBar(

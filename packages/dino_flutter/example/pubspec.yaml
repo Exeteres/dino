@@ -9,6 +9,3 @@ dependencies:
   flutter:
     sdk: flutter
   dino_flutter: 1.0.0
-
-dev_dependencies:
-  coverage: ^1.0.0
