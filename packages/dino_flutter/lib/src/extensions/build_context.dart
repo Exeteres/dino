@@ -4,5 +4,5 @@ import 'package:flutter/widgets.dart';
 
 extension DinoFlutterBuildContextExtensions on BuildContext {
   /// The [ServiceProvider] associated with this [BuildContext].
-  ServiceProvider get serviceProvider => DinoProvider.of(this);
+  ServiceProvider get sp => DinoProvider.of(this);
 }
