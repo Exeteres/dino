@@ -5,8 +5,10 @@ import 'package:generator_test_cases/conditional_registration/input.dart';
 
 class $ServiceCollection extends RuntimeServiceCollection {
   @override
-  void addGenerated<TService extends Object>(ServiceLifetime lifetime,
-      [bool registerAliases = true]) {
+  void addGenerated<TService extends Object>(
+    ServiceLifetime lifetime, [
+    bool registerAliases = true,
+  ]) {
     switch (TService) {
       case DevelopmentTestService:
         addFactory<DevelopmentTestService>(

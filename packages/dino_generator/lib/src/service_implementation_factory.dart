@@ -76,7 +76,13 @@ class ServiceImplementationFactory {
         continue;
       }
 
-      if (!supertype.element.isAbstract) {
+      final classElement = supertype.element;
+
+      if (classElement is! ClassElement) {
+        continue;
+      }
+
+      if (!classElement.isAbstract) {
         continue;
       }
 

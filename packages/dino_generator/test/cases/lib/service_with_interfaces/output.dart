@@ -6,8 +6,10 @@ import 'package:dino/src/lifecycle/lifecycle.dart';
 
 class $ServiceCollection extends RuntimeServiceCollection {
   @override
-  void addGenerated<TService extends Object>(ServiceLifetime lifetime,
-      [bool registerAliases = true]) {
+  void addGenerated<TService extends Object>(
+    ServiceLifetime lifetime, [
+    bool registerAliases = true,
+  ]) {
     switch (TService) {
       case TestService:
         addFactory<TestService>(
