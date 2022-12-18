@@ -114,6 +114,8 @@ class ServiceCollectionEmitter {
       implementation.serviceType.code,
       const Code('('),
       ...implementation.dependencies.map(_emitDependencyResolution),
+      ...implementation.namedDependencies.entries
+          .map(_emitNamedDependencyAssignment),
       const Code(')')
     ]);
   }
@@ -140,6 +142,16 @@ class ServiceCollectionEmitter {
         dependency.reference,
       ]).code,
       const Code(',')
+    ]);
+  }
+
+  Code _emitNamedDependencyAssignment(
+    MapEntry<String, ImplementationDependency> entry,
+  ) {
+    return Block.of([
+      Code(entry.key),
+      const Code(':'),
+      _emitDependencyResolution(entry.value),
     ]);
   }
 }

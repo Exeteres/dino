@@ -18,11 +18,13 @@ class ServiceImplementation {
   ServiceImplementation(
     this.serviceType,
     this.dependencies,
+    this.namedDependencies,
     this.aliases,
   );
 
   final Reference serviceType;
   final List<ImplementationDependency> dependencies;
+  final Map<String, ImplementationDependency> namedDependencies;
   final List<Reference> aliases;
 }
 
@@ -37,6 +39,7 @@ class ServiceImplementationFactory {
     }
 
     final dependencies = <ImplementationDependency>[];
+    final namedDependencies = <String, ImplementationDependency>{};
 
     for (var parameter in constructor.parameters) {
       var kind = DependencyKind.single;
@@ -57,7 +60,13 @@ class ServiceImplementationFactory {
         ..symbol = type.getDisplayString(withNullability: false)
         ..url = type.element!.librarySource!.uri.toString());
 
-      dependencies.add(ImplementationDependency(kind, reference));
+      final dependency = ImplementationDependency(kind, reference);
+
+      if (parameter.isNamed) {
+        namedDependencies[parameter.name] = dependency;
+      } else {
+        dependencies.add(dependency);
+      }
     }
 
     final serviceType = referElement(element);
@@ -66,6 +75,7 @@ class ServiceImplementationFactory {
     return ServiceImplementation(
       serviceType,
       dependencies,
+      namedDependencies,
       aliases,
     );
   }
