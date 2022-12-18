@@ -74,7 +74,7 @@ class ImplementationProviderLocator {
 
     node.accept(visitor);
 
-    if (visitor.locatedInvocations.length == 0) {
+    if (visitor.locatedInvocations.isEmpty) {
       return null;
     }
 

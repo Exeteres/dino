@@ -121,7 +121,7 @@ class ServiceCollectionEmitter {
   }
 
   Code _emitDependencyResolution(ImplementationDependency dependency) {
-    var methodName;
+    String methodName;
 
     switch (dependency.kind) {
       case DependencyKind.single:
