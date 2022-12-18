@@ -1,5 +1,5 @@
 name: dino_extensions
-description: A set of useful dino extensions.
+description: A set of dino extensions providing modularity, configuration, and more.
 version: 1.0.0-pre.0
 repository: https://github.com/Exeteres/dino
 
