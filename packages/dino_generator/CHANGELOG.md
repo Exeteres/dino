@@ -1,3 +1,7 @@
+## 1.0.0-pre.1
+
+ - **FEAT**: Add named parameter injection.
+
 ## 1.0.0-pre.0
 
  - **FIX**: Update tests.

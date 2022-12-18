@@ -1,6 +1,6 @@
 name: dino_generator
 description: An optional static code generator for the dino library.
-version: 1.0.0-pre.0
+version: 1.0.0-pre.1
 repository: https://github.com/Exeteres/dino
 
 environment:
