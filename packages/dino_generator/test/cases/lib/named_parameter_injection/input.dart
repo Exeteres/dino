@@ -9,5 +9,10 @@ void main() {
 }
 
 class TestService {
-  TestService(String a, String b, {String c, String d});
+  TestService(
+    String a,
+    String b, {
+    required String c,
+    required String d,
+  });
 }

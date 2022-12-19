@@ -6,4 +6,4 @@ environment:
 
 dev_dependencies:
   pansy_lint: ^1.0.3
-  melos: ^2.5.0
+  melos: ^2.9.0

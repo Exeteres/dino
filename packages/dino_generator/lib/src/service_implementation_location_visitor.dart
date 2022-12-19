@@ -7,11 +7,25 @@ class ServiceImplementationLocationVisitor extends RecursiveAstVisitor {
   ServiceImplementationLocationVisitor(this._scSymbol);
   final Element _scSymbol;
 
-  List<InvocationExpression> locatedInvocations = [];
+  List<Expression> locatedInvocations = [];
+
+  // We will collect all (or almost all) invocations
+  // that somehow use the ServiceCollection
 
   @override
   void visitFunctionExpressionInvocation(FunctionExpressionInvocation node) {
-    if (_checkArgumentIdentifiers(node)) {
+    if (_checkArgumentIdentifiers(node.argumentList)) {
+      // This is a function invocation with ServiceCollection as an argument
+
+      locatedInvocations.add(node);
+    }
+  }
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (_checkArgumentIdentifiers(node.argumentList)) {
+      // This is a constructor invocation with ServiceCollection as an argument
+
       locatedInvocations.add(node);
     }
   }
@@ -19,11 +33,30 @@ class ServiceImplementationLocationVisitor extends RecursiveAstVisitor {
   @override
   void visitMethodInvocation(MethodInvocation node) {
     if (node.target == null && _checkMethodTarget(node)) {
+      // This is an implicit call to the method on `this`
+      // inside ServiceCollection (it's sub class or extension)
+
+      // For example:
+      // extension on ServiceCollection {
+      //   void addMyService() {
+      //     addSingleton<MyService>(); // this is the analyzed invocation
+      //   }
+      // }
+
       locatedInvocations.add(node);
       return;
     }
 
-    if (_checkIdentifier(node.target) || _checkArgumentIdentifiers(node)) {
+    if (_checkIdentifier(node.target) ||
+        _checkArgumentIdentifiers(node.argumentList)) {
+      // This is an invocation of the method on a variable
+      // Eithier the target or one of the arguments is the ServiceCollection
+
+      // For example:
+      // services.addMyService(); // this is the analyzed invocation
+      // or
+      // addMyService(services); // this is the analyzed invocation
+
       locatedInvocations.add(node);
     }
   }
@@ -46,8 +79,8 @@ class ServiceImplementationLocationVisitor extends RecursiveAstVisitor {
     return isDinoServiceCollectionType(type);
   }
 
-  bool _checkArgumentIdentifiers(InvocationExpression expression) {
-    for (var argument in expression.argumentList.arguments) {
+  bool _checkArgumentIdentifiers(ArgumentList argumentList) {
+    for (var argument in argumentList.arguments) {
       if (_checkIdentifier(argument)) {
         return true;
       }

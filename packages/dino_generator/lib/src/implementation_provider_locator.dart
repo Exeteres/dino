@@ -7,6 +7,8 @@ import 'package:dino_generator/src/service_implementation_factory.dart';
 import 'package:dino_generator/src/service_implementation_location_visitor.dart';
 import 'package:dino_generator/src/utils.dart';
 
+import 'package:analyzer/src/dart/element/element.dart';
+
 class ServiceImplementationDefinition {
   ServiceImplementationDefinition(this.typeArgumentIndex);
   final int typeArgumentIndex;
@@ -83,7 +85,7 @@ class ImplementationProviderLocator {
 
   Future<ImplementationProvider> _create(
     ExecutableElement executableElement,
-    List<InvocationExpression> invocations,
+    List<Expression> invocations,
   ) async {
     final children = <ImplementationProvider>[];
     final implementations = <ServiceImplementation>[];
@@ -106,6 +108,21 @@ class ImplementationProviderLocator {
 
       if (isDinoMethodInvocation) {
         continue;
+      }
+
+      if (childExecutableElement is ConstructorElementImpl) {
+        // If the invocation is a constructor invocation, we need to recursively
+        // proccess the super constructor invocations.
+
+        final superConstructor = childExecutableElement.superConstructor;
+
+        if (superConstructor != null) {
+          final superImplementationProvider = await resolve(superConstructor);
+
+          if (superImplementationProvider != null) {
+            children.add(superImplementationProvider);
+          }
+        }
       }
 
       final childImplementationProvider = await resolve(childExecutableElement);
@@ -137,7 +154,7 @@ class ImplementationProviderLocator {
   ///
   /// `addGenerated<TService>(ServiceLifetime lifetime, [bool registerAliases])`
   Future<bool> _tryProcessAddGeneratedMethod(
-    InvocationExpression invocation,
+    Expression invocation,
     ExecutableElement parentExecutableElement,
     ExecutableElement executableElement,
     List<ServiceImplementation> implementations,
@@ -147,6 +164,10 @@ class ImplementationProviderLocator {
     final isAddGeneratedMethod = isDinoAddGeneratedMethod(executableElement);
 
     if (!isAddGeneratedMethod) {
+      return false;
+    }
+
+    if (invocation is! MethodInvocation) {
       return false;
     }
 
@@ -163,12 +184,16 @@ class ImplementationProviderLocator {
   }
 
   void _processImplementationProviderInvocation(
-    InvocationExpression invocation,
+    Expression invocation,
     ExecutableElement parentExecutableElement,
     ImplementationProvider implementationProvider,
     List<ServiceImplementation> implementations,
     List<ServiceImplementationDefinition> definitions,
   ) {
+    if (invocation is! MethodInvocation) {
+      return;
+    }
+
     for (final definition in implementationProvider.definitions) {
       final typeArgument = invocation
           .typeArguments?.arguments[definition.typeArgumentIndex].type?.element;
