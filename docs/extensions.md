@@ -85,31 +85,25 @@ void main() {
 }
 ```
 
-A module of the same type can only be added once. Repeated calls to `addModule` will not change anything. Accordingly, it is guaranteed that its `configureServices` method will also be called only once.
+It is guaranteed that `configureServices` method will be called only once, even if the module of the same type is added multiple times.
 
-Module can also accept additional configuration using module builder:
+There are also another method `configureInstanceServices` that allows you to configure services for a specific instance of the module:
 
 ```dart
 class TestModule extends Module {
+  TestModule({
+    required this.apiKey,
+  })
+
+  final String apiKey;
+
   @override
   void configureServices(ServiceCollection services) {
     services.addInstance(TestService());
   }
 
   @override
-  TestModuleBuilder createBuilder(ServiceCollection services) {
-    return TestModuleBuilder(services);
-  }
-}
-
-class TestModuleBuilder extends ModuleBuilder {
-  ModuleBuilder(ServiceCollection services) : super(services);
-
-  void addAdditionalServices() {
-    services.addInstance(AdditionalTestService());
-  }
-
-  void useApiKey(String apiKey) {
+  void configureInstanceServices(ServiceCollection services) {
     services.configure<TestOptions>((provider, options) {
       options.apiKey = apiKey;
     });
@@ -119,13 +113,22 @@ class TestModuleBuilder extends ModuleBuilder {
 void main() {
   final ServiceCollection services = ServiceCollection();
 
-  services.addModule<TestModuleBuilder>(
-    TestModule(),
-    (b) => b
-      ..addAdditionalServices()
-      ..useApiKey('42'),
+  services.addModule(
+    TestModule(
+      apiKey: '0123456789',
+    ),
+  );
+
+  services.addModule(
+    TestModule(
+      apiKey: '9876543210',
+    ),
   );
 }
 ```
 
-Unlike `configureServices`, additional configuration builder can be called multiple times.
+Unlike `configureServices`, `configureInstanceServices` will be called every time a module is added.
+
+In this case, repeated calls to `addModule` will result in multiple changes to the application configuration.
+The last call will set the final value of the `apiKey` field, but you can define your own logic for handling such cases.
+For example, you can merge options or even add support for using multiple modules with completely independent configurations.

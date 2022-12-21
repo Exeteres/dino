@@ -18,28 +18,17 @@ void main() {
       expect(descriptors.length, 1);
     });
 
-    test('should add module with additional configuration', () {
+    test('should add module with instance specific configuration', () {
       final services = RuntimeServiceCollection();
 
-      services.addModule<TestModuleBuilder>(
-        TestModuleWithBuilder(),
-        (b) => b
-          ..addAdditionalServices()
-          ..addAdditionalServices(),
-      );
-
-      services.addModule<TestModuleBuilder>(
-        TestModuleWithBuilder(),
-        (b) => b
-          ..addAdditionalServices()
-          ..addAdditionalServices(),
-      );
+      services.addModule(InstanceTestModule());
+      services.addModule(InstanceTestModule());
 
       final descriptors = services.where(
         (element) => element.serviceType == TestService,
       );
 
-      expect(descriptors.length, 5);
+      expect(descriptors.length, 2);
     });
   });
 
@@ -77,6 +66,13 @@ class TestModule extends Module {
   }
 }
 
+class InstanceTestModule extends Module {
+  @override
+  void configureInstanceServices(ServiceCollection services) {
+    services.addInstance(TestService());
+  }
+}
+
 class TestModuleWithCustomInfo extends Module {
   @override
   String get name => 'Test42';
@@ -92,26 +88,6 @@ class TestModuleWithCustomInfo extends Module {
     return {
       'test': 42,
     };
-  }
-}
-
-class TestModuleWithBuilder extends Module<TestModuleBuilder> {
-  @override
-  void configureServices(ServiceCollection services) {
-    services.addInstance(TestService());
-  }
-
-  @override
-  TestModuleBuilder createBuilder(ServiceCollection services) {
-    return TestModuleBuilder(services);
-  }
-}
-
-class TestModuleBuilder extends ModuleBuilder {
-  TestModuleBuilder(super.services);
-
-  void addAdditionalServices() {
-    services.addInstance(TestService());
   }
 }
 

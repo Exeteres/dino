@@ -1,9 +1,8 @@
 import 'package:dino/dino.dart';
-import 'package:dino_extensions/src/modularity/module_builder.dart';
 import 'package:dino_extensions/src/modularity/module_info.dart';
 
 /// The base class for all modules.
-abstract class Module<TBuilder extends ModuleBuilder> {
+abstract class Module {
   /// The name of the module.
   ///
   /// It will be passed to the [ModuleInfo] object.
@@ -41,19 +40,26 @@ abstract class Module<TBuilder extends ModuleBuilder> {
   /// It will be called when module is added to the collection only once.
   void configureServices(ServiceCollection services) {}
 
-  /// Creates a new instance of the module builder.
+  /// Configures the service collection with module instance-specific services.
   ///
-  /// This method must be overridden if the custom [TBuilder] type is provided.
-  TBuilder createBuilder(ServiceCollection services) {
-    if (TBuilder == dynamic || TBuilder == ModuleBuilder) {
-      return ModuleBuilder(services) as TBuilder;
-    }
+  /// Unlike [configureServices], this method will be called every time
+  /// when a new instance of the module is created and passed to the
+  /// [ServiceCollection.addModule] method.
+  void configureInstanceServices(ServiceCollection services) {}
 
-    throw UnsupportedError(
-      'Override the createBuilder method to '
-      'return a custom builder for this module',
-    );
-  }
+  /// The same as [configureServices] but this method is used for
+  /// some configuration actions that should be performed by base classes
+  /// rather than by the module itself.
+  ///
+  /// This method will be called before [configureServices].
+  void onServiceConfiguration(ServiceCollection services) {}
+
+  /// The same as [configureInstanceServices] but this method is used for
+  /// some configuration actions that should be performed by base classes
+  /// rather than by the module itself.
+  ///
+  /// This method will be called before [configureInstanceServices].
+  void onInstanceServiceConfiguration(ServiceCollection services) {}
 
   static String _normalizeModuleName(String name) {
     if (name.endsWith('Module')) {

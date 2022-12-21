@@ -1,25 +1,25 @@
 import 'package:dino/dino.dart';
 import 'package:dino_extensions/dino_extensions.dart';
 
+/// The global application options that
+/// should be configured by multiple modules.
 class ApplicationOptions {
   late int answerOfLife;
 }
 
+/// The options of the [TestModule] that
+/// should be used and configured mostly by the module itself.
 class TestModuleOptions {
   late String apiKey;
 }
 
-class TestModuleBuilder extends ModuleBuilder {
-  TestModuleBuilder(super.services);
+class TestModule extends Module {
+  TestModule({
+    required this.apiKey,
+  });
 
-  useApiKey(String apiKey) {
-    services.configure<TestModuleOptions>((provider, options) {
-      options.apiKey = apiKey;
-    });
-  }
-}
+  final String apiKey;
 
-class TestModule extends Module<TestModuleBuilder> {
   @override
   void configureServices(ServiceCollection services) {
     // Define an options for the module
@@ -32,8 +32,11 @@ class TestModule extends Module<TestModuleBuilder> {
   }
 
   @override
-  TestModuleBuilder createBuilder(ServiceCollection services) {
-    return TestModuleBuilder(services);
+  void configureInstanceServices(ServiceCollection services) {
+    // Configure test module options for the current instance
+    services.configure<TestModuleOptions>((provider, options) {
+      options.apiKey = apiKey;
+    });
   }
 }
 
@@ -44,9 +47,18 @@ void main() {
   services.defineOptions((provider) => ApplicationOptions());
 
   // Add a module
-  services.addModule<TestModuleBuilder>(
-    TestModule(),
-    (builder) => builder.useApiKey('1234567890'),
+  services.addModule(
+    TestModule(
+      apiKey: '1234567890',
+    ),
+  );
+
+  // If we add another instance of this module,
+  // it will replace the apiKey option
+  services.addModule(
+    TestModule(
+      apiKey: '0987654321',
+    ),
   );
 
   // Build a root scope

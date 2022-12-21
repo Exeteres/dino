@@ -1,6 +1,5 @@
 import 'package:dino/dino.dart';
 import 'package:dino_extensions/src/modularity/module.dart';
-import 'package:dino_extensions/src/modularity/module_builder.dart';
 import 'package:dino_extensions/src/modularity/module_registration_helper.dart';
 
 extension ModularityServiceCollectionExtensions on ServiceCollection {
@@ -8,20 +7,15 @@ extension ModularityServiceCollectionExtensions on ServiceCollection {
   ///
   /// This method will call the [Module.configureServices] method to add
   /// module-specific services to the collection.
+  /// This method will be called only once for each module.
   ///
-  /// Repeated calls of this method with module instances
-  /// of the same type will be ignored.
-  ///
-  /// If [configureAction] is provided,
-  /// it always will be called for a newly created module builder.
-  void addModule<TModuleBuilder extends ModuleBuilder>(
-    Module<TModuleBuilder> module, [
-    void Function(TModuleBuilder builder)? configureAction,
-  ]) {
+  /// This method also will call the [Module.configureInstanceServices] method
+  /// to add module instance-specific services to the collection.
+  /// This method will be called every time when a new instance of the module
+  /// is created and passed to this method.
+  void addModule(Module module) {
     final moduleManager = ModuleRegistrationHelper.getModuleManager(this);
 
     moduleManager.addModule(this, module);
-
-    configureAction?.call(module.createBuilder(this));
   }
 }

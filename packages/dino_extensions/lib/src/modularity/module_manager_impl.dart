@@ -31,11 +31,14 @@ class ModuleManagerImpl implements ModuleManager {
       'addModule called after container was built',
     );
 
-    if (_moduleInstances!.any((e) => e.runtimeType == module.runtimeType)) {
-      return;
+    if (!_moduleInstances!.any((e) => e.runtimeType == module.runtimeType)) {
+      module.onServiceConfiguration(services);
+      module.configureServices(services);
+
+      _moduleInstances!.add(module);
     }
 
-    module.configureServices(services);
-    _moduleInstances!.add(module);
+    module.onInstanceServiceConfiguration(services);
+    module.configureInstanceServices(services);
   }
 }
