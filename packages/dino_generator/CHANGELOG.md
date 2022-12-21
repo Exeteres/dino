@@ -1,3 +1,8 @@
+## 1.0.0-pre.2
+
+ - **FEAT**: Add support for polymorphic configuration methods.
+ - **FEAT**: Add ability to configure services in constructors.
+
 ## 1.0.0-pre.1
 
  - **FEAT**: Add named parameter injection.
