@@ -119,26 +119,6 @@ ExecutableElement? findEnclosingExecutableElement(Element element) {
   return executableElement;
 }
 
-ExecutableElement? getInvocationExecutableElement(
-  Expression invocation,
-) {
-  if (invocation is MethodInvocation) {
-    final identifier = invocation.function;
-
-    if (identifier is! Identifier) {
-      return null;
-    }
-
-    return identifier.staticElement as ExecutableElement;
-  }
-
-  if (invocation is InstanceCreationExpression) {
-    return invocation.constructorName.staticElement as ExecutableElement;
-  }
-
-  return null;
-}
-
 String renderElement(Element element) {
   return '$element in ${element.source}';
 }

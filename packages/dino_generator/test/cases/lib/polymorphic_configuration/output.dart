@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_import
 
 import 'package:dino/dino.dart';
-import 'package:generator_test_cases/generic_configuration_methods/input.dart';
+import 'package:generator_test_cases/polymorphic_configuration/input.dart';
 
 class $ServiceCollection extends RuntimeServiceCollection {
   @override
@@ -21,13 +21,6 @@ class $ServiceCollection extends RuntimeServiceCollection {
         addFactory<TestServiceB>(
           lifetime,
           (provider) => TestServiceB(),
-          true,
-        );
-        break;
-      case TestServiceC:
-        addFactory<TestServiceC>(
-          lifetime,
-          (provider) => TestServiceC(),
           true,
         );
         break;

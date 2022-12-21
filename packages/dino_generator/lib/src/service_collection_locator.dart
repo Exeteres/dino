@@ -4,6 +4,9 @@ import 'package:analyzer/dart/element/element.dart';
 
 import 'package:dino_generator/src/utils.dart';
 
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
 class ServiceCollectionLocator extends RecursiveAstVisitor {
   Map<String, VariableElement> locatedElements = {};
 

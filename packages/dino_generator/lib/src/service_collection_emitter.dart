@@ -3,6 +3,9 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dino_generator/src/service_implementation_factory.dart';
 import 'package:dino_generator/src/utils.dart';
 
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
 class ServiceCollectionEmitter {
   Class emit(
     String typeName,

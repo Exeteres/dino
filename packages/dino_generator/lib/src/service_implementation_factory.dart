@@ -5,8 +5,14 @@ import 'package:code_builder/code_builder.dart';
 
 import 'package:dino_generator/src/utils.dart';
 
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
 enum DependencyKind { single, iterable, list }
 
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
 class ImplementationDependency {
   ImplementationDependency(this.kind, this.reference);
 
@@ -14,6 +20,19 @@ class ImplementationDependency {
   final Reference reference;
 }
 
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
+///
+/// Service implementation contains an information about the implementation of
+/// the service of the specified type.
+///
+/// Besides the type of the service, it also contains a list of dependencies
+/// that will be resolved from the service provider in the generated factory
+/// function.
+///
+/// It also contains a list of aliases that will be automatically
+/// registered in the service collection.
 class ServiceImplementation {
   ServiceImplementation(
     this.serviceType,
@@ -29,7 +48,15 @@ class ServiceImplementation {
 }
 
 class ServiceImplementationFactory {
+  final Map<ClassElement, ServiceImplementation> _implementations = {};
+
   ServiceImplementation create(ClassElement element) {
+    final existingImplementation = _implementations[element];
+
+    if (existingImplementation != null) {
+      return existingImplementation;
+    }
+
     final constructor = element.unnamedConstructor;
 
     if (constructor == null || !constructor.isPublic) {
@@ -72,12 +99,16 @@ class ServiceImplementationFactory {
     final serviceType = referElement(element);
     final aliases = _createAliases(element).toList();
 
-    return ServiceImplementation(
+    final implementation = ServiceImplementation(
       serviceType,
       dependencies,
       namedDependencies,
       aliases,
     );
+
+    _implementations[element] = implementation;
+
+    return implementation;
   }
 
   Iterable<Reference> _createAliases(ClassElement element) sync* {

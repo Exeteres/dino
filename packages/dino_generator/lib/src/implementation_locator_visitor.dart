@@ -3,9 +3,12 @@ import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:dino_generator/src/utils.dart';
 
-class ServiceImplementationLocationVisitor extends RecursiveAstVisitor {
-  ServiceImplementationLocationVisitor(this._scSymbol);
-  final Element _scSymbol;
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
+class ImplementationLocatorVisitor extends RecursiveAstVisitor {
+  ImplementationLocatorVisitor(this._scSymbol);
+  final Element? _scSymbol;
 
   List<Expression> locatedInvocations = [];
 
@@ -80,7 +83,7 @@ class ServiceImplementationLocationVisitor extends RecursiveAstVisitor {
   }
 
   bool _checkArgumentIdentifiers(ArgumentList argumentList) {
-    for (var argument in argumentList.arguments) {
+    for (final argument in argumentList.arguments) {
       if (_checkIdentifier(argument)) {
         return true;
       }
@@ -90,14 +93,24 @@ class ServiceImplementationLocationVisitor extends RecursiveAstVisitor {
   }
 
   bool _checkIdentifier(Expression? node) {
+    if (node is ThisExpression) {
+      return true;
+    }
+
     if (node is! Identifier) {
       return false;
     }
 
-    if (node.staticElement != _scSymbol) {
+    final staticType = node.staticType;
+
+    if (staticType == null) {
       return false;
     }
 
-    return true;
+    if (_scSymbol != null) {
+      return node.staticElement == _scSymbol;
+    }
+
+    return isDinoServiceCollectionType(staticType);
   }
 }

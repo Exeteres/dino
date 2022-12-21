@@ -6,3 +6,4 @@ environment:
 
 dependencies:
   dino:
+  dino_extensions:

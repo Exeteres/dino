@@ -1,10 +1,13 @@
 import 'package:dino/dino.dart';
+import 'package:dino_extensions/dino_extensions.dart';
 
 import 'main.dino.g.dart';
 
 class DependencyA {}
 
 class DependencyB {}
+
+class DependencyC {}
 
 abstract class TestService {
   void doSomething();
@@ -13,8 +16,13 @@ abstract class TestService {
 class TestServiceImpl implements TestService {
   final DependencyA dependencyA;
   final DependencyB dependencyB;
+  final DependencyC dependencyC;
 
-  TestServiceImpl(this.dependencyA, this.dependencyB);
+  TestServiceImpl(
+    this.dependencyA,
+    this.dependencyB,
+    this.dependencyC,
+  );
 
   @override
   void doSomething() {
@@ -37,6 +45,9 @@ void main() {
   // Create TestService per a scope
   services.addScoped<TestServiceImpl>();
 
+  // Add services via a module
+  services.addModule(TestModule());
+
   // Create a root scope
   final rootScope = services.buildRootScope();
 
@@ -47,4 +58,11 @@ void main() {
   final testService = scope.serviceProvider.getRequired<TestService>();
 
   testService.doSomething();
+}
+
+class TestModule extends Module {
+  @override
+  void configureServices(ServiceCollection services) {
+    services.addSingleton<DependencyC>();
+  }
 }

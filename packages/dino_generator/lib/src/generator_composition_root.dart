@@ -1,9 +1,7 @@
-import 'dart:collection';
-
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:dino_generator/src/implementation_provider_locator.dart';
+import 'package:dino_generator/src/implementation_locator.dart';
 import 'package:dino_generator/src/library_method_analyzer.dart';
 import 'package:dino_generator/src/service_collection_emitter.dart';
 import 'package:dino_generator/src/service_collection_locator.dart';
@@ -11,6 +9,9 @@ import 'package:dino_generator/src/service_implementation_factory.dart';
 
 import 'package:dino_generator/src/utils.dart';
 
+/// This is an internal API that is not intended for use by developers.
+///
+/// It may be changed or removed without notice.
 class GeneratorCompositionRoot {
   final ServiceImplementationFactory _implementationFactory =
       ServiceImplementationFactory();
@@ -91,56 +92,19 @@ class GeneratorCompositionRoot {
       throw Exception('Could not find executable element for $element');
     }
 
-    final impLocator = ImplementationProviderLocator(
+    final implementationLocator = ImplementationLocator(
       _implementationFactory,
       resolver,
     );
 
-    final implementationProvider = await impLocator.resolve(
+    await implementationLocator.analyzeExecutable(
       executableElement,
-      element,
+      scSymbol: element,
     );
 
-    if (implementationProvider == null) {
-      log.warning('No service registered for ${renderElement(element)}');
-
-      return _scEmitter.emit(typeName, []);
-    }
-
-    final providerCache = HashSet<ImplementationProvider>();
-    final serviceCache = HashSet<Reference>();
-
-    final allImplementations = _iterateImplementations(
-      implementationProvider,
-      providerCache,
-      serviceCache,
+    return _scEmitter.emit(
+      typeName,
+      implementationLocator.locatedImplementations,
     );
-
-    return _scEmitter.emit(typeName, allImplementations);
-  }
-
-  Iterable<ServiceImplementation> _iterateImplementations(
-    ImplementationProvider provider,
-    HashSet<ImplementationProvider> providerCache,
-    HashSet<Reference> serviceCache,
-  ) sync* {
-    if (providerCache.contains(provider)) {
-      return;
-    }
-
-    providerCache.add(provider);
-
-    for (final implementation in provider.staticImplementations) {
-      if (serviceCache.contains(implementation.serviceType)) {
-        continue;
-      }
-
-      serviceCache.add(implementation.serviceType);
-      yield implementation;
-    }
-
-    for (final child in provider.children) {
-      yield* _iterateImplementations(child, providerCache, serviceCache);
-    }
   }
 }
