@@ -154,26 +154,51 @@ class ImplementationLocator {
       return false;
     }
 
-    final argument = parentArguments[parameterIndex];
+    final realTarget = parentArguments[parameterIndex];
 
-    if (argument == null) {
+    if (realTarget == null) {
       return false;
     }
 
-    for (final typeMethod in argument.methods) {
-      if (typeMethod.name == executableElement.name) {
-        await analyzeExecutable(
-          typeMethod,
-          invocation: invocation,
-          typeArguments: typeArguments,
-          arguments: arguments,
-        );
+    final method = _findPolymorphicMethod(
+      realTarget,
+      executableElement,
+    );
 
-        return true;
+    if (method == null) {
+      return false;
+    }
+
+    await analyzeExecutable(
+      method,
+      invocation: invocation,
+      typeArguments: typeArguments,
+      arguments: arguments,
+    );
+
+    return true;
+  }
+
+  MethodElement? _findPolymorphicMethod(
+    ClassElement realTarget,
+    ExecutableElement executableElement,
+  ) {
+    for (final typeMethod in realTarget.methods) {
+      if (typeMethod.name == executableElement.name) {
+        return typeMethod;
       }
     }
 
-    return false;
+    final superType = realTarget.supertype;
+
+    if (superType == null || superType.isDartCoreObject) {
+      return null;
+    }
+
+    return _findPolymorphicMethod(
+      superType.element as ClassElement,
+      executableElement,
+    );
   }
 
   Future<void> _tryProcessConstructorInvocation(

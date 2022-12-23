@@ -7,6 +7,7 @@ void main() {
 
   configure(services, ConfigurationServiceA());
   configure(services, ConfigurationServiceB());
+  configure(services, ConfigurationServiceC());
 }
 
 void configure<T extends ConfigurationService>(
@@ -34,6 +35,17 @@ class ConfigurationServiceB implements ConfigurationService {
   }
 }
 
+abstract class ConfigurationServiceCBase implements ConfigurationService {
+  @override
+  void configureServices(ServiceCollection services) {
+    services.addSingleton<TestServiceC>();
+  }
+}
+
+class ConfigurationServiceC extends ConfigurationServiceCBase {}
+
 class TestServiceA {}
 
 class TestServiceB {}
+
+class TestServiceC {}

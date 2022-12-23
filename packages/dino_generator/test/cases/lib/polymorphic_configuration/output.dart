@@ -24,6 +24,13 @@ class $ServiceCollection extends RuntimeServiceCollection {
           true,
         );
         break;
+      case TestServiceC:
+        addFactory<TestServiceC>(
+          lifetime,
+          (provider) => TestServiceC(),
+          true,
+        );
+        break;
     }
   }
 }
