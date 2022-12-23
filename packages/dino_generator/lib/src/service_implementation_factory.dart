@@ -85,7 +85,7 @@ class ServiceImplementationFactory {
       final reference = TypeReference((b) => b
         ..isNullable = type.nullabilitySuffix == NullabilitySuffix.question
         ..symbol = type.getDisplayString(withNullability: false)
-        ..url = type.element!.librarySource!.uri.toString());
+        ..url = type.element?.librarySource!.uri.toString());
 
       final dependency = ImplementationDependency(kind, reference);
 
