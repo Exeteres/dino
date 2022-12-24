@@ -1,3 +1,8 @@
+## 1.0.0-pre.3
+
+ - **FIX**: Add ability to inject functions.
+ - **FIX**: Analyze inherited polymorphic methods.
+
 ## 1.0.0-pre.2
 
  - **FEAT**: Add support for polymorphic configuration methods.
