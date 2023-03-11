@@ -1,3 +1,7 @@
+## 1.0.0-pre.4
+
+ - **FEAT**: Simplify code generation.
+
 ## 1.0.0-pre.3
 
  - **FIX**: Add ability to inject functions.

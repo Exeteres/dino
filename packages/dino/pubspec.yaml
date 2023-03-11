@@ -1,6 +1,6 @@
 name: dino
 description: A Dart dependency injection library aimed to be flexible, predictable and easy to use.
-version: 1.0.0-pre.0
+version: 1.0.0-pre.1
 repository: https://github.com/Exeteres/dino
 
 environment:

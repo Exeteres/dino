@@ -8,4 +8,4 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dino_flutter: ^1.0.0-pre.0
+  dino_flutter: ^1.0.0-pre.1
