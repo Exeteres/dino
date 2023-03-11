@@ -21,7 +21,7 @@ class TestServiceImpl implements TestService {
 }
 
 void main() {
-  final services = RuntimeServiceCollection();
+  final services = ServiceCollection();
 
   // Create dependency A only once
   services.addInstance(DependencyA());

@@ -1,28 +1,34 @@
 import 'package:dino/dino.dart';
-import 'package:dino_extensions/dino_extensions.dart';
 
-import 'main.dino.g.dart';
+part 'main.g.dart';
 
 class DependencyA {}
 
 class DependencyB {}
 
-class DependencyC {}
+@service
+class DependencyC {
+  DependencyC(this.dependencyA, this.dependencyB);
+
+  final DependencyA dependencyA;
+  final DependencyB dependencyB;
+}
 
 abstract class TestService {
   void doSomething();
 }
 
+@Service(ServiceLifetime.singleton)
 class TestServiceImpl implements TestService {
-  final DependencyA dependencyA;
-  final DependencyB dependencyB;
-  final DependencyC dependencyC;
-
   TestServiceImpl(
     this.dependencyA,
     this.dependencyB,
     this.dependencyC,
   );
+
+  final DependencyA dependencyA;
+  final DependencyB dependencyB;
+  final DependencyC dependencyC;
 
   @override
   void doSomething() {
@@ -30,39 +36,9 @@ class TestServiceImpl implements TestService {
   }
 }
 
-void main() {
-  // Create a service collection
-  // The implementation of the service collection is generated
-  //by the dino_generator based on subsequent method calls
-  final ServiceCollection services = $ServiceCollection();
+void main(List<String> args) {
+  final services = ServiceCollection();
 
-  // Create dependency A only once
-  services.addInstance(DependencyA());
-
-  // Create dependency B every time it is requested
-  services.addTransientFactory((sp) => DependencyB());
-
-  // Create TestService per a scope
-  services.addScoped<TestServiceImpl>();
-
-  // Add services via a module
-  services.addModule(TestModule());
-
-  // Create a root scope
-  final rootScope = services.buildRootScope();
-
-  // Create a nested scope
-  final scope = rootScope.serviceProvider.createScope();
-
-  // Resolve TestService from the nested scope
-  final testService = scope.serviceProvider.getRequired<TestService>();
-
-  testService.doSomething();
-}
-
-class TestModule extends Module {
-  @override
-  void configureServices(ServiceCollection services) {
-    services.addSingleton<DependencyC>();
-  }
+  services.addDependencyC(ServiceLifetime.transient);
+  services.addTestServiceImpl();
 }

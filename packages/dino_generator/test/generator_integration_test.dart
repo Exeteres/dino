@@ -4,6 +4,7 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:dino_generator/src/generator_composition_root.dart';
+import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
 
@@ -17,6 +18,7 @@ Future<void> main() async {
     test('generate code for ${testCase.name}', () async {
       var result = await invokeGeneratorForCase(compositionRoot, testCase);
 
+      result = "part of 'input.dart';\n" + result;
       result = dartFormatter.format(result);
 
       expect(result, TestCaseMatcher(testCase));
@@ -58,7 +60,7 @@ Future<TestCase?> tryGetTestCase(FileSystemEntity entity) async {
 
   String? outputContent;
 
-  final outputFile = File(path.join(entity.path, 'output.dart'));
+  final outputFile = File(path.join(entity.path, 'input.g.dart'));
 
   if (await outputFile.exists()) {
     outputContent = await outputFile.readAsString();
@@ -86,7 +88,7 @@ Future<String> invokeGeneratorForCase(
     (resolver) async {
       final library = await resolver.libraryFor(inputId);
 
-      return await compositionRoot.process(library, resolver) ?? '';
+      return await compositionRoot.process(LibraryReader(library)) ?? '';
     },
     inputId: inputId,
   );
@@ -121,13 +123,13 @@ class TestCaseMatcher implements Matcher {
     final actual = item as String;
 
     if (_testCase.output == null) {
-      File(path.join(_testCase.path, 'output.dart')).writeAsStringSync(actual);
+      File(path.join(_testCase.path, 'input.g.dart')).writeAsStringSync(actual);
 
       return true;
     }
 
     final mismatchFile = File(
-      path.join(_testCase.path, 'output.mismatch.dart'),
+      path.join(_testCase.path, 'input.mismatch.g.dart'),
     );
 
     if (_testCase.output != actual) {

@@ -1,13 +1,8 @@
 import 'package:dino/dino.dart';
 
-import 'package:generator_test_cases/named_parameter_injection/output.dart';
+part 'input.g.dart';
 
-void main() {
-  final ServiceCollection services = $ServiceCollection();
-
-  services.addSingleton<TestService>();
-}
-
+@service
 class TestService {
   TestService(
     String a,

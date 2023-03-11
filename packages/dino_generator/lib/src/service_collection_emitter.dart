@@ -1,64 +1,51 @@
 import 'package:code_builder/code_builder.dart';
-
 import 'package:dino_generator/src/service_implementation_factory.dart';
-import 'package:dino_generator/src/utils.dart';
 
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
 class ServiceCollectionEmitter {
-  Class emit(
-    String typeName,
-    Iterable<ServiceImplementation> implementations,
-  ) {
-    return Class(
+  Extension emit(ServiceImplementation implementation) {
+    return Extension(
       (b) => b
-        ..name = typeName
-        ..extend = referDino('RuntimeServiceCollection')
-        ..methods.add(_emitMethod(implementations)),
+        ..name = '${implementation.serviceType.symbol}Factory'
+        ..on = refer('ServiceCollection')
+        ..methods.add(_emitMethod(implementation)),
     );
   }
 
-  Method _emitMethod(Iterable<ServiceImplementation> implementations) {
-    return Method.returnsVoid(
-      (b) => b
-        ..name = 'addGenerated'
-        ..annotations.add(CodeExpression(Code('override')))
-        ..types.add(refer('TService extends Object'))
-        ..requiredParameters.addAll([
-          Parameter((b) => b
+  Method _emitMethod(ServiceImplementation implementation) {
+    return Method.returnsVoid((builder) {
+      final lifetime = implementation.lifetime;
+
+      if (lifetime != null) {
+        builder.optionalParameters.add(Parameter(
+          (b) => b
             ..name = 'lifetime'
-            ..type = referDino('ServiceLifetime')),
-        ])
-        ..optionalParameters.addAll([
-          Parameter((b) => b
-            ..name = 'registerAliases'
-            ..type = refer('bool')
-            ..defaultTo = Code('true')),
-        ])
-        ..body = _emitBody(implementations),
-    );
+            ..type = refer('ServiceLifetime')
+            ..defaultTo = lifetime.code,
+        ));
+      } else {
+        builder.requiredParameters.add(Parameter(
+          (b) => b
+            ..name = 'lifetime'
+            ..type = refer('ServiceLifetime'),
+        ));
+      }
+
+      builder.optionalParameters.add(Parameter(
+        (b) => b
+          ..name = 'registerAliases'
+          ..type = refer('bool')
+          ..defaultTo = Code('true'),
+      ));
+
+      builder.name = 'add${implementation.serviceType.symbol}';
+      builder.body = _emitBody(implementation);
+    });
   }
 
-  Code _emitBody(Iterable<ServiceImplementation> implementations) {
-    return Block.of([
-      const Code('switch (TService) {'),
-      ...implementations.map(_emitImplementationCase),
-      const Code('}')
-    ]);
-  }
-
-  Code _emitImplementationCase(ServiceImplementation implementation) {
-    return Block.of([
-      const Code('case '),
-      implementation.serviceType.code,
-      const Code(':'),
-      _emitImplementation(implementation),
-      const Code('break;')
-    ]);
-  }
-
-  Code _emitImplementation(ServiceImplementation implementation) {
+  Code _emitBody(ServiceImplementation implementation) {
     return Block.of([
       _emitServiceRegistration(implementation),
       ..._emitAliasRegistrationBlock(implementation)

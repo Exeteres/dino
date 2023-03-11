@@ -3,10 +3,6 @@
 - [Core library](core-library.md)
 - Code generation
   - [Setting up code generation](#setting-up-code-generation)
-  - [Conditional registration](#conditional-registration)
-  - [Configuration methods](#configuration-methods)
-  - [Generic configuration methods](#generic-configuration-methods)
-- [Extensions](extensions.md)
 
 ---
 
@@ -57,117 +53,35 @@ dev_dependencies:
   build_runner:
 ```
 
-Then you should create `ServiceCollection` in a special way:
+Now we can annotate our services with `@service` annotation:
 
 ```dart
-// myfile.dart
-
 import 'package:dino/dino.dart';
 
-import 'myfile.dino.g.dart';
+@service
+class MyService implements Initializable, Disposable {
+  MyService(this.dependencyA, this.dependencyB);
 
-void main() {
-  final ServiceCollection services = $ServiceCollection();
-}
-```
+  final DependencyA dependencyA;
+  final DependencyB dependencyB;
 
-As you may have guessed, the `$ServiceCollection` class does not yet exist and will be generated.
+  Future<void> initialize() async {
+    // Perform initialization here
+  }
 
-For the generator to recognize this class, several conditions must be met:
-
-- it must be instantiated in a variable assignment expression;
-- this variable must be **explicitly** set to the `ServiceCollection` type;
-- class name must start with a dollar sign.
-
-You must also import the generated file.
-
-Since we have explicitly specified the type of the `services` variable, we can use IDE autocompletion even when the class has not yet been generated.
-
-Now let's rewrite the registration code from the last example:
-
-```dart
-final ServiceCollection services = $ServiceCollection();
-
-services.addSingleton<MyService>();
-```
-
-Just one line is enough to register the factory and all aliases.
-If you look at the source code of the generated file, you will see that it does the same thing that we would do without using code generation.
-
-Besides `addSingleton` you can also use `addTransient` and `addScoped`.
-
-### Conditional registration
-
-Since dependency registration happens in the ordinary method, you can use the ordinary conditional statements. For example, you can register different implementations of the same service depending on the environment:
-
-```dart
-if (isDevelopment) {
-  services.addSingleton<DevelopmentMyService>();
-} else {
-  services.addSingleton<ProductionMyService>();
-}
-```
-
-The generator will generate descriptors for all possible services, but only those for which the `addSingleton` method will actually be called will be added to the collection.
-
-### Configuration methods
-
-You probably guessed that dependency registration can be moved to separate methods, but does this work with code generation? Of course it works:
-
-```dart
-void registerMyService(ServiceCollection services) {
-  services.addSingleton<MyService>();
-}
-
-void main() {
-  final ServiceCollection services = $ServiceCollection();
-
-  registerMyService(services);
-}
-```
-
-Not only regular methods are supported, but also extension methods:
-
-```dart
-extension MyServiceExtension on ServiceCollection {
-  void registerMyService() {
-    addSingleton<MyService>();
+  Future<void> dispose() async {
+    // Perform disposal here
   }
 }
-
-void main() {
-  final ServiceCollection services = $ServiceCollection();
-
-  services.registerMyService();
-}
 ```
 
-Moreover, these do not have to be local methods - these methods can be imported from various libraries. This allows you to break the application into modules and add only the necessary functionality.
-
-### Generic configuration methods
-
-Configuration methods can also be generic, and use type parameters as services:
+If you run `pub run build_runner build` now, you will see that the generator has created a file called `my_service.g.dart` in the same directory as your service.
+This file contains the extension methods that we wrote manually before. Now you can use them in your code:
 
 ```dart
-extension on ServiceCollection {
-  void addMyService<TCustomImpl extends MyService>() {
-    if (TCustomImpl == dynamic) {
-      addSingleton<MyServiceImpl>();
-    } else {
-      addSingleton<TCustomImpl>();
-    }
-  }
-}
-
-Future<void> main() async {
-  final ServiceCollection services = $ServiceCollection();
-
-  services.addMyService();
-
-  // or
-
-  services.addMyService<CustomMyServiceImpl>();
-}
+services.addMyService(ServiceLifetime.singleton);
 ```
 
-Read next: [Extensions](extensions.md)
+You can also use the `@Service` annotation to provide the lifetime of the service. In this case, you can omit the lifetime parameter in the `addMyService`.
+
+<!-- TODO describe advanced injection features -->

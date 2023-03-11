@@ -43,19 +43,19 @@ Then their registration in dino will look like this:
 
 ```dart
 void main() {
-  final ServiceCollection services = RuntimeServiceCollection();
+  final services = ServiceCollection();
 
   services.addInstance(Dio());
 
   services.addSingletonFactory(
     (sp) => RestClient(
-      dio: sp.getRequired<Dio>(),
+      sp.getRequired<Dio>(),
     ),
   );
 
   services.addSingletonFactory(
     (sp) => Repository(
-      restClient: sp.getRequired<RestClient>(),
+      sp.getRequired<RestClient>(),
     ),
   );
 }
@@ -67,11 +67,11 @@ If we add code generation using dino_generator, then the code will become even n
 import 'main.dino.g.dart';
 
 void main() {
-  final ServiceCollection services = $ServiceCollection();
+  final services = ServiceCollection();
 
   services.addInstance(Dio());
-  services.addSingleton<RestClient>();
-  services.addSingleton<Repository>();
+  services.addRestClient();
+  services.addRepository();
 }
 ```
 
@@ -88,11 +88,11 @@ You can also use dino in flutter with `dino_flutter` package:
 
 ```dart
 void main() {
-  final ServiceCollection services = $ServiceCollection();
+  final services = ServiceCollection();
 
   services.addInstance(Dio());
-  services.addSingleton<RestClient>();
-  services.addSingleton<Repository>();
+  services.addRestClient();
+  services.addRepository();
 
   final rootScope = services.buildRootScope();
 
@@ -124,7 +124,6 @@ For a better understanding of concepts such as `ServiceCollection`, `ServiceScop
 
 - [Core library](https://github.com/Exeteres/dino/blob/master/docs/core-library.md)
 - [Code generation](https://github.com/Exeteres/dino/blob/master/docs/code-generation.md)
-- [Extensions](https://github.com/Exeteres/dino/blob/master/docs/extensions.md)
 
 ### Contributing
 

@@ -1,15 +1,10 @@
 import 'package:dino/dino.dart';
 
-import 'package:generator_test_cases/function_injection/output.dart';
-
-void main() {
-  final ServiceCollection services = $ServiceCollection();
-
-  services.addSingleton<TestService>();
-}
+part 'input.g.dart';
 
 typedef Dependency = String Function(String);
 
+@service
 class TestService {
   TestService(this.dependency1, this.dependency2);
 

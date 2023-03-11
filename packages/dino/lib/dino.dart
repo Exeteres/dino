@@ -1,7 +1,7 @@
+export 'src/collection/service_annotation.dart';
 export 'src/collection/service_descriptor.dart';
 export 'src/collection/service_collection.dart';
 export 'src/collection/service_collection_extensions.dart';
-export 'src/collection/runtime_service_collection.dart';
 
 export 'src/provider/service_provider.dart';
 export 'src/provider/service_provider_extensions.dart';

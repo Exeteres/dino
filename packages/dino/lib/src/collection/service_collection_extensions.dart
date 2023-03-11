@@ -47,41 +47,8 @@ extension ServiceCollectionExtensions on ServiceCollection {
     addFactory(ServiceLifetime.transient, factory);
   }
 
-  /// Registers a singleton service of the specified [TService] type.
-  /// Service must have a single accessible constructor.
-  ///
-  /// It's implementation will be created automatically by the dino generator.
-  ///
-  /// This method also gets optional [registerAliases] parameter indicating
-  /// whether aliases for all service interfaces should be registered or not.
-  void addSingleton<TService extends Object>([bool registerAliases = true]) {
-    addGenerated<TService>(ServiceLifetime.singleton, registerAliases);
-  }
-
-  /// Registers a scoped service of the specified [TService] type.
-  /// Service must have a single accessible constructor.
-  ///
-  /// It's implementation will be created automatically by the dino generator.
-  ///
-  /// This method also gets optional [registerAliases] parameter indicating
-  /// whether aliases for all service interfaces should be registered or not.
-  void addScoped<TService extends Object>([bool registerAliases = true]) {
-    addGenerated<TService>(ServiceLifetime.scoped, registerAliases);
-  }
-
-  /// Registers a transient service of the specified [TService] type.
-  /// Service must have a single accessible constructor.
-  ///
-  /// It's implementation will be created automatically by the dino generator.
-  ///
-  /// This method also gets optional [registerAliases] parameter indicating
-  /// whether aliases for all service interfaces should be registered or not.
-  void addTransient<TService extends Object>([bool registerAliases = true]) {
-    addGenerated<TService>(ServiceLifetime.transient, registerAliases);
-  }
-
   /// Registers a transient service of the specified [TService] type
-  /// implmented as an alias for the specified [TImplementation] type.
+  /// implemented as an alias for the specified [TImplementation] type.
   /// [TImplementation] must implement [TService].
   void addAlias<TService extends Object, TImplementation extends TService>([
     bool isGenerated = false,

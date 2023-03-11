@@ -1,17 +1,42 @@
+import 'dart:collection';
+
 import 'package:dino/src/collection/service_descriptor.dart';
+import 'package:dino/src/lifecycle/lifecycle_registration_helper.dart';
 
 /// A collection of service descriptors.
-abstract class ServiceCollection implements List<ServiceDescriptor> {
-  /// Registers a service of the specified type with specified [lifetime].
-  /// Service must have a single accessible constructor.
-  ///
-  /// It's implementation will be created automatically by the dino generator.
-  ///
-  /// This method also gets optional [registerAliases] parameter
-  /// indicating whether aliases for all service interfaces
-  /// should be registered or not.
-  void addGenerated<TService extends Object>(
-    ServiceLifetime lifetime, [
-    bool registerAliases = true,
-  ]);
+class ServiceCollection extends ListBase<ServiceDescriptor>
+    implements List<ServiceDescriptor> {
+  ServiceCollection() {
+    LifecycleRegistrationHelper.addLifecycleManager(this);
+  }
+
+  final List<ServiceDescriptor> _descriptors = [];
+
+  @override
+  int get length => _descriptors.length;
+
+  @override
+  set length(int newLength) {
+    _descriptors.length = newLength;
+  }
+
+  @override
+  ServiceDescriptor operator [](int index) {
+    return _descriptors[index];
+  }
+
+  @override
+  void operator []=(int index, ServiceDescriptor value) {
+    _descriptors[index] = value;
+  }
+
+  @override
+  void add(ServiceDescriptor element) {
+    _descriptors.add(element);
+  }
+
+  @override
+  void addAll(Iterable<ServiceDescriptor> iterable) {
+    _descriptors.addAll(iterable);
+  }
 }

@@ -8,7 +8,7 @@ class Calculator {
 }
 
 Future<void> main() async {
-  final ServiceCollection services = RuntimeServiceCollection();
+  final ServiceCollection services = ServiceCollection();
 
   services.addInstance(Calculator());
 

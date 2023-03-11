@@ -7,7 +7,6 @@
   - [Multiple registrations](#multiple-registrations)
   - [Nested scopes](#nested-scopes)
 - [Code generation](code-generation.md)
-- [Extensions](extensions.md)
 
 ---
 

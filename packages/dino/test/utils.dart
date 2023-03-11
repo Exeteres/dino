@@ -3,7 +3,7 @@ import 'package:dino/dino.dart';
 class TestObject {}
 
 ServiceScope createServiceScope(List<ServiceDescriptor> descriptors) {
-  final services = RuntimeServiceCollection();
+  final services = ServiceCollection();
 
   services.addAll(descriptors);
 
