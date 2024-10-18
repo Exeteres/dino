@@ -1,6 +1,6 @@
 import 'package:dino/dino.dart';
 
-class TestObject {}
+final class TestObject {}
 
 ServiceScope createServiceScope(List<ServiceDescriptor> descriptors) {
   final services = ServiceCollection();

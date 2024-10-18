@@ -2,14 +2,13 @@ import 'package:dino/dino.dart';
 
 part 'input.g.dart';
 
-class DependencyA {}
+final class DependencyA {}
 
-class DependencyB {}
+final class DependencyB {}
 
 @service
-class TestService {
+final class TestService {
+  const TestService(this.dependencyA, this.dependencyB);
   final DependencyA dependencyA;
   final DependencyB dependencyB;
-
-  TestService(this.dependencyA, this.dependencyB);
 }

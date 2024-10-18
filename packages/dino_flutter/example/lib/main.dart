@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
-
 import 'package:dino/dino.dart';
 import 'package:dino_flutter/dino_flutter.dart';
+import 'package:flutter/material.dart';
 
-class Calculator {
+final class Calculator {
   int sum(int a, int b) => a + b;
 }
 
 Future<void> main() async {
-  final ServiceCollection services = ServiceCollection();
+  final services = ServiceCollection();
 
   services.addInstance(Calculator());
 
@@ -18,12 +17,14 @@ Future<void> main() async {
   runApp(
     DinoProvider(
       serviceProvider: scope.serviceProvider,
-      child: Application(),
+      child: const Application(),
     ),
   );
 }
 
-class Application extends StatelessWidget {
+final class Application extends StatelessWidget {
+  const Application({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,19 +32,21 @@ class Application extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+final class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final calculator = context.sp.getRequired<Calculator>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dino Flutter Example'),
+        title: const Text('Dino Flutter Example'),
       ),
       body: Center(
         child: Text('${calculator.sum(1, 2)}'),

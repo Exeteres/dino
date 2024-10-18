@@ -1,11 +1,13 @@
+import 'dart:async';
+
 /// Represents a service that need some asynchronous work for initialization.
-abstract class Initializable {
+abstract interface class Initializable {
   /// Initializes the service.
-  Future<void> initialize();
+  FutureOr<void> initialize();
 }
 
 /// Represents a service that need some asynchronous work for disposal.
-abstract class Disposable {
+abstract interface class Disposable {
   /// Disposes the service.
-  Future<void> dispose();
+  FutureOr<void> dispose();
 }

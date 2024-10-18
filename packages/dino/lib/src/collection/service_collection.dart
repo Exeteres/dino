@@ -4,7 +4,7 @@ import 'package:dino/src/collection/service_descriptor.dart';
 import 'package:dino/src/lifecycle/lifecycle_registration_helper.dart';
 
 /// A collection of service descriptors.
-class ServiceCollection extends ListBase<ServiceDescriptor>
+final class ServiceCollection extends ListBase<ServiceDescriptor>
     implements List<ServiceDescriptor> {
   ServiceCollection() {
     LifecycleRegistrationHelper.addLifecycleManager(this);

@@ -2,7 +2,7 @@ import 'package:dino/dino.dart';
 import 'package:dino/src/lifecycle/lifecycle_manager_impl.dart';
 import 'package:test/test.dart';
 
-class InitializableTestObject implements Initializable {
+final class InitializableTestObject implements Initializable {
   int counter = 0;
 
   @override

@@ -8,11 +8,11 @@ import 'package:source_gen/source_gen.dart';
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-class GeneratorCompositionRoot {
+final class GeneratorCompositionRoot {
   final _dartEmitter = DartEmitter();
   final _emitter = ServiceCollectionEmitter();
   final _impFactory = ServiceImplementationFactory();
-  final _annotation = TypeChecker.fromRuntime(Service);
+  final _annotation = const TypeChecker.fromRuntime(Service);
 
   String? process(LibraryReader library) {
     final result = StringBuffer();
@@ -22,7 +22,7 @@ class GeneratorCompositionRoot {
 
       if (classElement is! ClassElement) {
         throw InvalidGenerationSourceError(
-          'The @service annotation can only be used on classes.',
+          'The @service annotation can only be used on final classes.',
           element: annotated.element,
         );
       }
@@ -48,5 +48,5 @@ Reference? getLifetime(ConstantReader annotation) {
 
   return lifetimeString == null
       ? null
-      : refer('ServiceLifetime.${lifetimeString}');
+      : refer('ServiceLifetime.$lifetimeString');
 }

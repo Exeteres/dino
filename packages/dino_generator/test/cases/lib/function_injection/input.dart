@@ -5,7 +5,7 @@ part 'input.g.dart';
 typedef Dependency = String Function(String);
 
 @service
-class TestService {
+final class TestService {
   TestService(this.dependency1, this.dependency2);
 
   final String Function(String) dependency1;

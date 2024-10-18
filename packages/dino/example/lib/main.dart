@@ -1,18 +1,18 @@
 import 'package:dino/dino.dart';
 
-class DependencyA {}
+final class DependencyA {}
 
-class DependencyB {}
+final class DependencyB {}
 
-abstract class TestService {
+abstract final class TestService {
   void doSomething();
 }
 
-class TestServiceImpl implements TestService {
+final class TestServiceImpl implements TestService {
+  const TestServiceImpl(this.dependencyA, this.dependencyB);
+
   final DependencyA dependencyA;
   final DependencyB dependencyB;
-
-  TestServiceImpl(this.dependencyA, this.dependencyB);
 
   @override
   void doSomething() {

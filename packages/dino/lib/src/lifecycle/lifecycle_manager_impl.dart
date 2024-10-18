@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:dino/src/lifecycle/lifecycle_manager.dart';
@@ -5,13 +6,13 @@ import 'package:dino/src/lifecycle/lifecycle_manager.dart';
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-class LifecycleManagerImpl implements LifecycleManager {
+final class LifecycleManagerImpl implements LifecycleManager {
   final Map<Type, HashSet<Object>> _serviceSets = {};
 
   @override
   Future<void> process<TService extends Object>(
     TService service,
-    Future<void> Function(TService) operation,
+    FutureOr<void> Function(TService) operation,
   ) async {
     var serviceSet = _serviceSets[TService];
 

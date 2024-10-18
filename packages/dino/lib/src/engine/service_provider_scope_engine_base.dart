@@ -5,7 +5,7 @@ import 'package:dino/src/provider/service_scope.dart';
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-abstract class ServiceProviderScopeEngineBase
+abstract base class ServiceProviderScopeEngineBase
     implements ServiceProvider, ServiceScope {
   ServiceProviderScopeEngineBase(this.serviceMap);
   final Map<Type, List<ServiceDescriptor>> serviceMap;
@@ -25,7 +25,7 @@ abstract class ServiceProviderScopeEngineBase
     final descriptors = serviceMap[serviceType];
     if (descriptors == null) return;
 
-    for (var descriptor in descriptors) {
+    for (final descriptor in descriptors) {
       if (descriptor.implementationAlias != null) {
         yield* getServiceIterable(
           descriptor.implementationAlias!,

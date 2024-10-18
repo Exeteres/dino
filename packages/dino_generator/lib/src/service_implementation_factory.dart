@@ -12,7 +12,7 @@ enum DependencyKind { single, iterable, list }
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-class ImplementationDependency {
+final class ImplementationDependency {
   ImplementationDependency(this.kind, this.reference);
 
   final DependencyKind kind;
@@ -32,7 +32,7 @@ class ImplementationDependency {
 ///
 /// It also contains a list of aliases that will be automatically
 /// registered in the service collection.
-class ServiceImplementation {
+final class ServiceImplementation {
   ServiceImplementation(
     this.serviceType,
     this.lifetime,
@@ -51,11 +51,11 @@ class ServiceImplementation {
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-class ServiceImplementationFactory {
+final class ServiceImplementationFactory {
   ServiceImplementation create(ClassElement element, Reference? lifetime) {
     if (element.isAbstract) {
       throw InvalidGenerationSourceError(
-        'The service annotation can only be used on non-abstract classes.',
+        'The service annotation can only be used on non-abstract final classes.',
         element: element,
       );
     }
@@ -64,7 +64,7 @@ class ServiceImplementationFactory {
 
     if (constructor == null) {
       throw InvalidGenerationSourceError(
-        'The service annotation can only be used on classes with a default constructor.',
+        'The service annotation can only be used on final classes with a default constructor.',
         element: element,
       );
     }
@@ -72,7 +72,7 @@ class ServiceImplementationFactory {
     final dependencies = <ImplementationDependency>[];
     final namedDependencies = <String, ImplementationDependency>{};
 
-    for (var parameter in constructor.parameters) {
+    for (final parameter in constructor.parameters) {
       var kind = DependencyKind.single;
       var type = parameter.type;
 
@@ -86,10 +86,12 @@ class ServiceImplementationFactory {
         }
       }
 
-      final reference = TypeReference((b) => b
-        ..isNullable = type.nullabilitySuffix == NullabilitySuffix.question
-        ..symbol = type.getDisplayString(withNullability: false)
-        ..url = type.element?.librarySource!.uri.toString());
+      final reference = TypeReference(
+        (b) => b
+          ..isNullable = type.nullabilitySuffix == NullabilitySuffix.question
+          ..symbol = type.getDisplayString(withNullability: false)
+          ..url = type.element?.librarySource!.uri.toString(),
+      );
 
       final dependency = ImplementationDependency(kind, reference);
 
@@ -115,7 +117,7 @@ class ServiceImplementationFactory {
   }
 
   Iterable<Reference> _createAliases(ClassElement element) sync* {
-    for (var supertype in element.allSupertypes) {
+    for (final supertype in element.allSupertypes) {
       if (supertype.isDartCoreObject) {
         continue;
       }

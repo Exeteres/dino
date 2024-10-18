@@ -6,7 +6,7 @@ import 'package:dino/src/provider/service_scope.dart';
 
 extension LifecycleServiceScopeExtensions on ServiceScope {
   /// A [LifecycleManager] instance associated with this [ServiceScope].
-  LifecycleManager get lifecycleManager {
+  LifecycleManager getLifecycleManager() {
     return serviceProvider.getRequired<LifecycleManager>();
   }
 
@@ -17,21 +17,19 @@ extension LifecycleServiceScopeExtensions on ServiceScope {
       true,
     );
 
-    for (var initializable in initializables) {
-      await lifecycleManager.initialize(initializable as Initializable);
+    for (final initializable in initializables) {
+      await getLifecycleManager().initialize(initializable as Initializable);
     }
   }
 
   /// Disposes all [Disposable] services in this [ServiceScope].
   Future<void> dispose() async {
-    // Resolve lifecycle manager before iteration
-    // to prevent collection modification
-    final _lifecycleManager = lifecycleManager;
+    final lifecycleManager = getLifecycleManager();
 
     final disposables = createdServices.whereType<Disposable>();
 
-    for (var disposable in disposables) {
-      await _lifecycleManager.dispose(disposable);
+    for (final disposable in disposables) {
+      await lifecycleManager.dispose(disposable);
     }
   }
 }

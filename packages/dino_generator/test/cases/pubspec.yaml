@@ -2,8 +2,8 @@ name: generator_test_cases
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <3.0.0"
+  sdk: ^3.0.0
 
 dependencies:
-  dino:
+  dino: ^1.0.0-pre.1
   dino_extensions:

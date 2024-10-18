@@ -18,7 +18,7 @@ typedef ServiceFactory<TService extends Object> = TService Function(
 );
 
 /// Describes a service.
-class ServiceDescriptor {
+final class ServiceDescriptor {
   ServiceDescriptor._(
     this.serviceType,
     this.lifetime,

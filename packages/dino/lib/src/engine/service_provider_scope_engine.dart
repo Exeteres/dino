@@ -5,7 +5,7 @@ import 'package:dino/src/engine/service_provider_scope_engine_base.dart';
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-class ServiceProviderScopeEngine extends ServiceProviderScopeEngineBase {
+final class ServiceProviderScopeEngine extends ServiceProviderScopeEngineBase {
   ServiceProviderScopeEngine(this._rootScopeEngine)
       : super(_rootScopeEngine.serviceMap);
 

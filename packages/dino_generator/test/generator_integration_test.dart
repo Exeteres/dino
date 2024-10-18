@@ -4,9 +4,9 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:dino_generator/src/generator_composition_root.dart';
+import 'package:path/path.dart' as path;
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
-import 'package:path/path.dart' as path;
 
 Future<void> main() async {
   final testCases = await locateTestCases();
@@ -18,7 +18,7 @@ Future<void> main() async {
     test('generate code for ${testCase.name}', () async {
       var result = await invokeGeneratorForCase(compositionRoot, testCase);
 
-      result = "part of 'input.dart';\n" + result;
+      result = "part of 'input.dart';\n$result";
       result = dartFormatter.format(result);
 
       expect(result, TestCaseMatcher(testCase));
@@ -26,7 +26,7 @@ Future<void> main() async {
   }
 }
 
-class TestCase {
+final class TestCase {
   TestCase(this.name, this.path, this.input, this.output);
 
   final String name;
@@ -51,7 +51,7 @@ Future<TestCase?> tryGetTestCase(FileSystemEntity entity) async {
 
   final inputFile = File(path.join(entity.path, 'input.dart'));
 
-  if (!await inputFile.exists()) {
+  if (!inputFile.existsSync()) {
     return null;
   }
 
@@ -62,7 +62,7 @@ Future<TestCase?> tryGetTestCase(FileSystemEntity entity) async {
 
   final outputFile = File(path.join(entity.path, 'input.g.dart'));
 
-  if (await outputFile.exists()) {
+  if (outputFile.existsSync()) {
     outputContent = await outputFile.readAsString();
     outputContent = outputContent.replaceAll('\r\n', '\n');
   }
@@ -88,16 +88,16 @@ Future<String> invokeGeneratorForCase(
     (resolver) async {
       final library = await resolver.libraryFor(inputId);
 
-      return await compositionRoot.process(LibraryReader(library)) ?? '';
+      return compositionRoot.process(LibraryReader(library)) ?? '';
     },
     inputId: inputId,
   );
 }
 
-class TestCaseMatcher implements Matcher {
-  final TestCase _testCase;
+final class TestCaseMatcher implements Matcher {
+  const TestCaseMatcher(this._testCase);
 
-  TestCaseMatcher(this._testCase);
+  final TestCase _testCase;
 
   @override
   Description describe(Description description) {

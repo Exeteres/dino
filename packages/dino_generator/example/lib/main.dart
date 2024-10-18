@@ -2,24 +2,24 @@ import 'package:dino/dino.dart';
 
 part 'main.g.dart';
 
-class DependencyA {}
+final class DependencyA {}
 
-class DependencyB {}
+final class DependencyB {}
 
 @service
-class DependencyC {
+final class DependencyC {
   DependencyC(this.dependencyA, this.dependencyB);
 
   final DependencyA dependencyA;
   final DependencyB dependencyB;
 }
 
-abstract class TestService {
+abstract final class TestService {
   void doSomething();
 }
 
 @Service(ServiceLifetime.singleton)
-class TestServiceImpl implements TestService {
+final class TestServiceImpl implements TestService {
   TestServiceImpl(
     this.dependencyA,
     this.dependencyB,

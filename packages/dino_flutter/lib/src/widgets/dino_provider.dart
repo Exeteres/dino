@@ -2,8 +2,8 @@ import 'package:dino/dino.dart';
 import 'package:flutter/widgets.dart';
 
 /// Provides a [ServiceProvider] to descendant widgets.
-class DinoProvider extends InheritedWidget {
-  DinoProvider({
+final class DinoProvider extends InheritedWidget {
+  const DinoProvider({
     super.key,
     required this.serviceProvider,
     required super.child,

@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 import 'utils.dart';
 
-class TestObject implements Initializable, Disposable {
+final class TestObject implements Initializable, Disposable {
   bool initialized = false;
   bool disposed = false;
 
@@ -18,7 +18,7 @@ class TestObject implements Initializable, Disposable {
   }
 }
 
-class TestObject2 implements Initializable, Disposable {
+final class TestObject2 implements Initializable, Disposable {
   bool initialized = false;
   bool disposed = false;
 

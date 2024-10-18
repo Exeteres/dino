@@ -1,5 +1,5 @@
 /// Defines a mechanism for retrieving services.
-abstract class ServiceProvider {
+abstract interface class ServiceProvider {
   /// Returns an iterable of all services of specified type.
   ///
   /// Services will be lazily resolved while iteration.

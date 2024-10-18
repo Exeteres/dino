@@ -1,9 +1,9 @@
 import 'package:dino/src/collection/service_collection.dart';
 import 'package:dino/src/collection/service_descriptor.dart';
 import 'package:dino/src/engine/service_provider_root_scope_engine.dart';
+import 'package:dino/src/engine/service_scope_factory_impl.dart';
 import 'package:dino/src/provider/service_scope.dart';
 import 'package:dino/src/provider/service_scope_factory.dart';
-import 'package:dino/src/engine/service_scope_factory_impl.dart';
 
 extension ServiceCollectionExtensions on ServiceCollection {
   /// Registers a singleton service of the specified [TService] type

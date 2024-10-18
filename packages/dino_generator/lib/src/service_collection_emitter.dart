@@ -4,7 +4,7 @@ import 'package:dino_generator/src/service_implementation_factory.dart';
 /// This is an internal API that is not intended for use by developers.
 ///
 /// It may be changed or removed without notice.
-class ServiceCollectionEmitter {
+final class ServiceCollectionEmitter {
   Extension emit(ServiceImplementation implementation) {
     return Extension(
       (b) => b
@@ -19,26 +19,32 @@ class ServiceCollectionEmitter {
       final lifetime = implementation.lifetime;
 
       if (lifetime != null) {
-        builder.optionalParameters.add(Parameter(
-          (b) => b
-            ..name = 'lifetime'
-            ..type = refer('ServiceLifetime')
-            ..defaultTo = lifetime.code,
-        ));
+        builder.optionalParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'lifetime'
+              ..type = refer('ServiceLifetime')
+              ..defaultTo = lifetime.code,
+          ),
+        );
       } else {
-        builder.requiredParameters.add(Parameter(
-          (b) => b
-            ..name = 'lifetime'
-            ..type = refer('ServiceLifetime'),
-        ));
+        builder.requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'lifetime'
+              ..type = refer('ServiceLifetime'),
+          ),
+        );
       }
 
-      builder.optionalParameters.add(Parameter(
-        (b) => b
-          ..name = 'registerAliases'
-          ..type = refer('bool')
-          ..defaultTo = Code('true'),
-      ));
+      builder.optionalParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'registerAliases'
+            ..type = refer('bool')
+            ..defaultTo = const Code('true'),
+        ),
+      );
 
       builder.name = 'add${implementation.serviceType.symbol}';
       builder.body = _emitBody(implementation);
@@ -46,10 +52,12 @@ class ServiceCollectionEmitter {
   }
 
   Code _emitBody(ServiceImplementation implementation) {
-    return Block.of([
-      _emitServiceRegistration(implementation),
-      ..._emitAliasRegistrationBlock(implementation)
-    ]);
+    return Block.of(
+      [
+        _emitServiceRegistration(implementation),
+        ..._emitAliasRegistrationBlock(implementation),
+      ],
+    );
   }
 
   Iterable<Code> _emitAliasRegistrationBlock(
@@ -75,28 +83,34 @@ class ServiceCollectionEmitter {
     Reference aliasType,
     Reference implementationType,
   ) {
-    return Block.of([
-      refer('addAlias').call([
-        refer('true'),
-      ], {}, [
-        aliasType,
-        implementationType,
-      ]).code,
-      const Code(';')
-    ]);
+    return Block.of(
+      [
+        refer('addAlias').call([
+          refer('true'),
+        ], {}, [
+          aliasType,
+          implementationType,
+        ]).code,
+        const Code(';'),
+      ],
+    );
   }
 
   Code _emitServiceRegistration(ServiceImplementation implementation) {
-    return Block.of([
-      Code('addFactory<'),
-      implementation.serviceType.code,
-      const Code('>(lifetime,'),
-      Method((b) => b
-        ..requiredParameters.add(Parameter((b) => b.name = 'provider'))
-        ..lambda = true
-        ..body = _emitServiceConstruction(implementation)).closure.code,
-      const Code(', true,);')
-    ]);
+    return Block.of(
+      [
+        const Code('addFactory<'),
+        implementation.serviceType.code,
+        const Code('>(lifetime,'),
+        Method(
+          (b) => b
+            ..requiredParameters.add(Parameter((b) => b.name = 'provider'))
+            ..lambda = true
+            ..body = _emitServiceConstruction(implementation),
+        ).closure.code,
+        const Code(', true,);'),
+      ],
+    );
   }
 
   Code _emitServiceConstruction(ServiceImplementation implementation) {
@@ -106,7 +120,7 @@ class ServiceCollectionEmitter {
       ...implementation.dependencies.map(_emitDependencyResolution),
       ...implementation.namedDependencies.entries
           .map(_emitNamedDependencyAssignment),
-      const Code(')')
+      const Code(')'),
     ]);
   }
 
@@ -116,22 +130,17 @@ class ServiceCollectionEmitter {
     switch (dependency.kind) {
       case DependencyKind.single:
         methodName = 'getRequired';
-        break;
       case DependencyKind.iterable:
         methodName = 'getIterable';
-        break;
       case DependencyKind.list:
         methodName = 'getMany';
-        break;
-      default:
-        throw Exception('Unexpected dependency kind');
     }
 
     return Block.of([
       refer('provider').property(methodName).call([], {}, [
         dependency.reference,
       ]).code,
-      const Code(',')
+      const Code(','),
     ]);
   }
 

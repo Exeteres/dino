@@ -1,7 +1,7 @@
 import 'package:dino/src/provider/service_provider.dart';
 
 /// Represents a scope of services.
-abstract class ServiceScope {
+abstract interface class ServiceScope {
   /// An instance of [ServiceProvider] that provides services for this scope.
   ServiceProvider get serviceProvider;
 
