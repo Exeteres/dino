@@ -70,7 +70,8 @@ extension ServiceCollectionExtensions on ServiceCollection {
   ServiceScope buildRootScope() {
     final serviceMap = <Type, List<ServiceDescriptor>>{};
 
-    for (var descriptor in this) {
+    for (var i = length - 1; i >= 0; i--) {
+      final descriptor = this[i];
       var descriptors = serviceMap[descriptor.serviceType];
 
       if (descriptors == null) {
